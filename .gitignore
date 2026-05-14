@@ -1,0 +1,32 @@
+# Salidas regenerables del pipeline
+1_fastqc/
+2_multiqc/
+3_lecturas_limpias/
+4_indice_transcriptoma/
+5_cuantificacion_salmon/
+
+# Archivos comprimidos
+*.rar
+*.zip
+*.tar
+
+# Documentos administrativos o enunciados de la actividad
+mubio03_act2.docx
+tareas*.docx
+
+# Archivos temporales de R
+.RData
+.Rhistory
+.Rproj.user/
+
+# Archivos temporales generales
+*.tmp
+*.log
+.DS_Store
+Thumbs.db
+__pycache__/
+
+# Entornos locales
+.conda/
+.env/
+venv/
