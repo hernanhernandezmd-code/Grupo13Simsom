@@ -1,0 +1,3 @@
+"metodo","genes_evaluados","genes_significativos_FDR_0.05"
+"DESeq2",37,5
+"edgeR",37,9
