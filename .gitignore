@@ -1,10 +1,3 @@
-# Salidas regenerables del pipeline
-1_fastqc/
-2_multiqc/
-3_lecturas_limpias/
-4_indice_transcriptoma/
-5_cuantificacion_salmon/
-
 # Archivos comprimidos
 *.rar
 *.zip
