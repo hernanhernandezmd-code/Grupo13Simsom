@@ -8,8 +8,9 @@ Procesar archivos FASTQ simulados, realizar control de calidad, cuantificacion c
 
 ## Scripts
 
-- parte1.sh: control de calidad, limpieza conservadora de lecturas, indexacion del transcriptoma y cuantificacion con Salmon.
+parte1yparte2.sh      Fases 1 parcial y 2: entorno, QC, limpieza y Salmon
+parte3.R       Fase 3: agrupación transcrito-gen con tximport
+parte4.R       Fase 4: análisis diferencial
 
 ## Nota
-
 Los archivos FASTQ incluidos corresponden a datos simulados con fines docentes. Las salidas intermedias regenerables, como reportes FastQC/MultiQC, lecturas limpias, índices de Salmon y carpetas completas de cuantificación, no se versionan porque pueden reconstruirse ejecutando los scripts del pipeline.
