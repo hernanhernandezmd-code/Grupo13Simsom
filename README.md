@@ -1,43 +1,49 @@
-# Grupo 13 Simpson — RNA‑seq (obesidad)
+# Grupo 13 Simpson - RNA-seq (Obesos 1 vs. Obesos 2)
 
-Repositorio del análisis de expresión diferencial de genes relacionados con obesidad usando datos simulados de RNA‑seq.
+Repositorio del analisis de expresion diferencial de genes relacionados con la obesidad usando datos de secuenciacion simulados.
 
 ## Objetivo
 
-Procesar los FASTQ simulados, ejecutar control de calidad, cuantificación con Salmon, agregar transcritos a genes, realizar análisis diferencial y producir visualizaciones para la comparación Obeso1 vs Obeso2.
+Procesar los FASTQ simulados, ejecutar el control de calidad, la cuantificacion con Salmon, la agrupacion de transcritos a genes, el analisis diferencial y producir las visualizaciones para la comparacion Obeso 1 vs Obeso 2.
 
 ## Estructura del repositorio
-- `Fastqs/`: lecturas FASTQ simuladas (entradas del pipeline).
-- `Genes/`: archivos FASTA por gen usados como referencia en el ejercicio.
-- `1_fastqc/`: reportes FastQC por muestra.
-- `2_multiqc/`: reporte MultiQC y datos agregados.
-- `3_lecturas_limpias/`: lecturas tras el filtrado/recorte.
-- `4_indice_transcriptoma/`: índice de Salmon generado desde `Referencia.fasta`.
-- `5_cuantificacion_salmon/`: resultados de Salmon (`quant.sf`) por muestra.
-- `tables/`: tablas de salida y matrices usadas para análisis y visualización. Contiene, entre otros:
-	- `matriz_conteos_genes_todas_muestras.csv`: matriz de conteos brutos (por gen y por muestra).
-	- `matriz_TPM_genes_todas_muestras.csv`: matriz de TPM calculada a partir de las cuantificaciones.
-	- `matriz_conteos_normalizados_DESeq2.csv`: matriz de conteos normalizados (salida generada con DESeq2, para visualización).
-- `objects/`: objetos R (`.rds`) para reutilizar resultados intermedios (p. ej. `txi_genes.rds`, `ajuste_edger.rds`).
-- `results/`: salidas finales del análisis y figuras.
-- `tables/`: (repetido) tablas intermedias y finales.
-- `Design.csv`: diseño experimental con columnas como `sample`, `condition`, `age`, `sex`.
-- `Referencia.fasta`: secuencias de referencia usadas para construir el índice.
-- `Transcrito_a_Gen.tsv`: mapeo transcrito → gen usado para agregar abundancias.
+
+- "Fastqs/" : Lecturas FASTQ simuladas paired-end (entradas del pipeline).
+- "Genes/" : Archivos de referencia por gen incluidos en el ejercicio.
+- "1_fastqc/" : Reportes de control de calidad individuales generados con FastQC.
+- "2_multiqc/" : Reporte unificado y estadisticas globales generadas con MultiQC.
+- "3_lecturas_limpias/" : Lecturas de alta calidad filtradas tras el proceso con Trimmomatic.
+- "4_indice_transcriptoma/" : Indice binario de Salmon construido desde Referencia.fasta.
+- "5_cuantificacion_salmon/" : Carpetas individuales con los archivos de abundancia (quant.sf) por muestra.
+- "tables/" : Tablas procesadas y matrices resultantes del analisis diferencial:
+  - "matriz_conteos_genes_todas_muestras.csv" : Matriz de conteos crudos colapsada a nivel de gen.
+  - "matriz_TPM_genes_todas_muestras.csv" : Matriz de abundancias en unidades TPM (Transcripts Per Million).
+  - "matriz_conteos_normalizados_DESeq2.csv" : Matriz de expresion corregida por profundidad mediante el metodo de mediana de proporciones.
+  - "resultados_DESeq2_Obeso2_vs_Obeso1.csv" : Tabla completa de resultados del contraste principal de DESeq2.
+  - "resultados_edgeR_Obeso2_vs_Obeso1.csv" : Tabla de resultados de la comparacion secundaria con edgeR.
+- "objects/" : Objetos de R guardados (ficheros.rds) para reutilizar resultados intermedios.
+- "Design.csv" : Diseño experimental con metadatos de condicion, edad y sexo de las muestras.
+- "Referencia.fasta" : Transcriptoma de referencia usado para la indexacion de Salmon.
+- "Transcrito_a_Gen.tsv" : Tabla de correspondencia transcrito a gen usada para la agregacion.
 
 ## Scripts
 
-- `parte1yParte2.sh`: prepara entorno Conda y ejecuta pasos iniciales (FastQC, limpieza, índice y cuantificación).
-- `parte3.r`: importa `quant.sf`, usa `Transcrito_a_Gen.tsv` y genera matrices por gen.
-- `Parte4.R`: análisis diferencial (DESeq2 principal, análisis ajustado por edad y comparación con edgeR).
+- "parte1.sh" : Script unificado de Bash que configura el entorno Conda, ejecuta control de calidad, limpieza de lecturas, indexacion y cuantificacion.
+- "parte3.R" : Script de R que realiza la importacion de Salmon, la remocion de versiones y el colapso de transcritos a genes mediante tximport.
+- "parte4.R" : Script de R que ejecuta el analisis diferencial Obeso 1 vs Obeso 2 (DESeq2 principal, modelo ajustado por edad y comparacion con edgeR).
 
-## Conteos normalizados vs modelado estadístico
+## Nota de Rigor Metodológico: Normalización vs. Modelado Estadístico
 
-- Se incluye en `tables/matriz_conteos_normalizados_DESeq2.csv` una matriz de conteos normalizados generada con las funciones de DESeq2 (`counts(dds, normalized=TRUE)`). Este archivo se proporciona para facilitar visualizaciones y exportes (p. ej. generación de heatmaps o tablas por gen).
-- Importante: los modelos estadísticos de DESeq2 y edgeR se construyen a partir de los conteos brutos y de los factores/size factors apropiados; la matriz normalizada aquí incluida NO sustituye al uso correcto de los conteos crudos dentro del flujo de modelado estadístico (es decir, no se recomienda usar la matriz normalizada como entrada directa para recalcular pruebas de DE).
+Para cumplir estrictamente con los entregables de la actividad (la tabla de expresion por persona y gen), se exporta la matriz de expresion normalizada en el archivo tables/matriz_conteos_normalizados_DESeq2.csv.
 
-## Nota sobre reproducibilidad
+Sin embargo, se deja explicito que el analisis estadistico de expresion diferencial con DESeq2 y edgeR NO se realiza sobre esta matriz normalizada.
 
-Las salidas regenerables (FastQC/MultiQC, lecturas limpias, índices de Salmon, cuantificación por muestra) pueden reconstruirse ejecutando los scripts incluidos. Los objetos `.rds` almacenados en `objects/` permiten retomar análisis intermedios sin volver a ejecutar pasos costosos.
+### Justificación Técnica:
+- **Distribución de los Datos** : Los algoritmos de DESeq2 and edgeR asumen que los conteos de lectura siguen una distribución binomial negativa. Esta distribución modela la variabilidad asumiendo que la varianza depende de la media de los conteos discretos (enteros brutos sin normalizar).
+- **Preservación del Modelo de Varianza** : Al realizar la prueba sobre datos ya normalizados o transformados (como TPM o conteos normalizados), se destruye la relación media-varianza original. Esto invalida la estimacion de la dispersion de los genes, reduce la potencia estadistica e infla de forma grave la tasa de falsos positivos.
+- **Normalización Interna** : La normalización por tamaño de librería se calcula e integra internamente durante el ajuste del modelo (DESeq() o estimateDisp()) mediante factores de escala que actúan como offsets matematicos.
+- **Uso de Datos Normalizados** : Los datos normalizados de la matriz matriz_conteos_normalizados_DESeq2.csv se reservan de forma exclusiva para fines descriptivos y gráficos (tales como la generación de los heatmaps y la tabla visual del póster).
 
-Si necesitas que regenere la matriz normalizada a partir de los objetos R originales o que ejecute el pipeline para producir nuevas salidas, indícalo y lo preparo.
+## Nota sobre Reproducibilidad
+
+Las salidas regenerables (reportes FastQC, MultiQC, lecturas limpias, índice de Salmon y cuantificaciones) pueden reconstruirse ejecutando los scripts del pipeline. Los objetos.rds en objects/ permiten retomar los análisis de R de manera inmediata sin repetir los pasos de cuantificación.
