@@ -47,11 +47,11 @@ dir.create("objects", showWarnings = FALSE)    # Objetos de R reutilizables
 
 ### 1. CARGA DE RESULTADOS DIFERENCIALES ####
 
-res_deseq2 <- read.csv("tables/resultados_DESeq2_Obeso2_vs_Obeso1.csv")    # Resultado principal
+res_deseq2 <- read.csv("tables/resultados_DESeq2_Obeso1_vs_Obeso2.csv")    # Resultado principal
 
-res_deseq2_edad <- read.csv("tables/resultados_DESeq2_edad_Obeso2_vs_Obeso1.csv")    # Modelo ajustado por edad
+res_deseq2_edad <- read.csv("tables/resultados_DESeq2_edad_Obeso1_vs_Obeso2.csv")    # Modelo ajustado por edad
 
-res_edger <- read.csv("tables/resultados_edgeR_Obeso2_vs_Obeso1.csv")    # Comparación secundaria
+res_edger <- read.csv("tables/resultados_edgeR_Obeso1_vs_Obeso2.csv")    # Comparación secundaria
 
 cat("\nGenes evaluados por DESeq2 principal:\n")
 print(nrow(res_deseq2))
@@ -209,8 +209,8 @@ write.csv(res_kegg,
 discusion_genes <- genes_deseq2_sig[, c("gene_id", "baseMean", "log2FoldChange", "pvalue", "padj")]    # Columnas clave
 
 discusion_genes$direccion <- ifelse(discusion_genes$log2FoldChange > 0,
-                                    "Mayor en Obeso2",
-                                    "Mayor en Obeso1")    # Sentido del cambio
+                                    "Mayor en Obeso1",
+                                    "Mayor en Obeso2")    # Sentido del cambio
 
 discusion_genes$interpretacion_biologica <- ""    # Espacio para curaduría manual
 

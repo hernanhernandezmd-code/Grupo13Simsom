@@ -46,9 +46,9 @@ dir.create("objects", showWarnings = FALSE)    # Carpeta de objetos reutilizable
 
 ### 1. CARGA DE RESULTADOS Y OBJETOS ####
 
-res_deseq2 <- read.csv("tables/resultados_DESeq2_Obeso2_vs_Obeso1.csv")    # Resultado principal DESeq2
-res_deseq2_edad <- read.csv("tables/resultados_DESeq2_edad_Obeso2_vs_Obeso1.csv")    # Resultado ajustado por edad
-res_edger <- read.csv("tables/resultados_edgeR_Obeso2_vs_Obeso1.csv")    # Resultado secundario edgeR
+res_deseq2 <- read.csv("tables/resultados_DESeq2_Obeso1_vs_Obeso2.csv")    # Resultado principal DESeq2
+res_deseq2_edad <- read.csv("tables/resultados_DESeq2_edad_Obeso1_vs_Obeso2.csv")    # Resultado ajustado por edad
+res_edger <- read.csv("tables/resultados_edgeR_Obeso1_vs_Obeso2.csv")    # Resultado secundario edgeR
 obj_deseq2 <- readRDS("objects/obj_deseq2.rds")    # Objeto DESeq2 principal generado en la parte 4
 
 cat("\nResultados cargados para figuras finales:\n")
@@ -73,8 +73,8 @@ write.csv(resumen_metodos,
           row.names = FALSE)    # Tabla breve para póster
 
 res_deseq2$direccion <- ifelse(res_deseq2$log2FoldChange > 0,
-                               "Mayor en Obeso2",
-                               "Mayor en Obeso1")    # Sentido del cambio de expresión
+                               "Mayor en Obeso1",
+                               "Mayor en Obeso2")    # Sentido del cambio de expresión
 
 res_deseq2_sig <- res_deseq2[res_deseq2$gene_id %in% genes_sig, ]    # Resultado solo con genes significativos
 res_deseq2_sig <- res_deseq2_sig[order(res_deseq2_sig$padj), ]    # Ordena por FDR
@@ -101,19 +101,19 @@ volcano_deseq2 <- EnhancedVolcano::EnhancedVolcano(toptable = res_deseq2,    # T
                                                    selectLab = genes_sig,    # Etiqueta solo genes significativos
                                                    pCutoff = 0.05,    # Corte FDR
                                                    FCcutoff = 1,    # Corte log2FC
-                                                   title = "Obeso2 vs Obeso1",    # Título de la comparación
+                                                   title = "Obeso1 vs Obeso2",    # Título de la comparación
                                                    subtitle = "DESeq2 principal",    # Método principal
-                                                   caption = "FDR < 0.05; log2FC positivo indica mayor expresion en Obeso2",
+                                                   caption = "FDR < 0.05; log2FC positivo indica mayor expresion en Obeso1",
                                                    labSize = 4)    # Tamaño de etiquetas
 
-png(filename = "graphs/volcano_DESeq2_Obeso2_vs_Obeso1.png",
+png(filename = "graphs/volcano_DESeq2_Obeso1_vs_Obeso2.png",
     width = 1600,
     height = 1200,
     res = 150)    # Archivo PNG para el póster
 print(volcano_deseq2)    # Dibuja volcano plot
 dev.off()    # Cierra archivo PNG
 
-ggplot2::ggsave(filename = "graphs/volcano_DESeq2_Obeso2_vs_Obeso1.pdf",
+ggplot2::ggsave(filename = "graphs/volcano_DESeq2_Obeso1_vs_Obeso2.pdf",
                 plot = volcano_deseq2,
                 width = 9,
                 height = 7)    # Versión vectorial para maquetación

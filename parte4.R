@@ -87,8 +87,8 @@ write.csv(conteos.norm, file = "tables/matriz_conteos_normalizados_DESeq2.csv")
 write.csv(txi_deseq2$abundance, file = "tables/matriz_TPM_genes_obesos.csv")
 
 res_deseq2 <- results(object = obj_deseq2,
-    contrast = c("Condition", "Sobrepeso/Obeso2", "Sobrepeso/Obeso1"),
-    alpha = 0.05)    # Obeso2 comparado contra Obeso1
+     contrast = c("Condition", "Sobrepeso/Obeso1", "Sobrepeso/Obeso2"),
+     alpha = 0.05)    # Obeso1 comparado contra Obeso2
 
 res_deseq2 <- as.data.frame(res_deseq2)    # Convierte resultados a tabla manejable
 res_deseq2$gene_id <- rownames(res_deseq2)    # Conserva el identificador del gen
@@ -96,11 +96,11 @@ res_deseq2 <- res_deseq2[order(res_deseq2$padj), ]    # Ordena por significancia
 
 cat("\nResumen del contraste DESeq2:\n")
 print(summary(results(obj_deseq2,
-                      contrast = c("Condition", "Sobrepeso/Obeso2", "Sobrepeso/Obeso1"),
+                      contrast = c("Condition", "Sobrepeso/Obeso1", "Sobrepeso/Obeso2"),
                       alpha = 0.05)))
 
 write.csv(res_deseq2,
-          file = "tables/resultados_DESeq2_Obeso2_vs_Obeso1.csv",
+          file = "tables/resultados_DESeq2_Obeso1_vs_Obeso2.csv",
           row.names = FALSE)    # Guarda tabla completa de resultados
 ### 3B. ANÁLISIS DESEQ2 AJUSTADO POR EDAD ####
 # Edad se incorpora como covariable de ajuste
@@ -122,10 +122,10 @@ obj_deseq2_edad <- DESeq(object = obj_deseq2_edad)
 res_deseq2_edad <- results(
      object = obj_deseq2_edad,
      contrast = c("Condition",
-                  "Sobrepeso/Obeso2",
-                  "Sobrepeso/Obeso1"),
+                  "Sobrepeso/Obeso1",
+                  "Sobrepeso/Obeso2"),
      alpha = 0.05)    
-# Obeso2 frente a Obeso1 ajustando por edad
+# Obeso1 frente a Obeso2 ajustando por edad
 
 res_deseq2_edad <- as.data.frame(res_deseq2_edad)
 res_deseq2_edad$gene_id <- rownames(res_deseq2_edad)
@@ -139,13 +139,13 @@ print(summary(
      results(
           obj_deseq2_edad,
           contrast = c("Condition",
-                       "Sobrepeso/Obeso2",
-                       "Sobrepeso/Obeso1"),
+                       "Sobrepeso/Obeso1",
+                       "Sobrepeso/Obeso2"),
           alpha = 0.05)))
 
 write.csv(
      res_deseq2_edad,
-     file="tables/resultados_DESeq2_edad_Obeso2_vs_Obeso1.csv",
+     file="tables/resultados_DESeq2_edad_Obeso1_vs_Obeso2.csv",
      row.names=FALSE)    
 
 ### 4. ANÁLISIS DIFERENCIAL SECUNDARIO CON edgeR ####
@@ -159,7 +159,7 @@ design_edger$Condition_edgeR <- gsub(pattern = "Sobrepeso/",
                                      replacement = "", 
                                      x = as.character(design_edger$Condition))    # Simplifica nombres de grupo
 design_edger$Condition_edgeR <- factor(design_edger$Condition_edgeR,
-                                       levels = c("Obeso1", "Obeso2"))    # Obeso1 queda como referencia
+                                       levels = c("Obeso2", "Obeso1"))    # Obeso1 queda como referencia
 rownames(design_edger) <- design_edger$Sample    # Los nombres de fila siguen identificando muestras
 
 conteos_edger <- conteos_edger[, design_edger$Sample]    # Ordena columnas según el diseño experimental
@@ -184,7 +184,7 @@ ajuste_edger <- glmQLFit(y = obj_edger,
                          design = matriz_diseno_edger)    # Ajusta modelo quasi-likelihood por gen
 
 prueba_edger <- glmQLFTest(glmfit = ajuste_edger,
-                           coef = "Condition_edgeRObeso2")    # Contraste Obeso2 frente a Obeso1
+                           coef = "Condition_edgeRObeso1")    # Contraste Obeso1 frente a Obeso2
 
 res_edger <- topTags(object = prueba_edger,
                      n = Inf,
@@ -193,7 +193,7 @@ res_edger <- topTags(object = prueba_edger,
 res_edger$gene_id <- rownames(res_edger)    # Conserva identificador del gen como columna
 
 write.csv(res_edger,
-          file = "tables/resultados_edgeR_Obeso2_vs_Obeso1.csv",
+          file = "tables/resultados_edgeR_Obeso1_vs_Obeso2.csv",
           row.names = FALSE)    # Guarda tabla completa de edgeR
 
 saveRDS(object = obj_edger,
@@ -202,7 +202,7 @@ saveRDS(object = obj_edger,
 saveRDS(object = ajuste_edger,
         file = "objects/ajuste_edger.rds")    # Guarda ajuste estadístico de edgeR
 
-cat("\nResumen edgeR, Obeso2 vs Obeso1:\n")
+cat("\nResumen edgeR, Obeso1 vs Obeso2:\n")
 print(decideTestsDGE(object = prueba_edger,
       p.value = 0.05, lfc = 0))    # Resume genes sobreexpresados y subexpresados
 
