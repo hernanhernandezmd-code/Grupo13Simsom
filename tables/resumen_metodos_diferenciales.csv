@@ -1,0 +1,4 @@
+"metodo","genes_evaluados","genes_significativos_FDR_0.05"
+"DESeq2 principal",37,5
+"DESeq2 ajustado por edad",37,3
+"edgeR secundario",37,9

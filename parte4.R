@@ -84,7 +84,7 @@ conteos.norm <- counts(obj_deseq2, normalized = TRUE)
 write.csv(conteos.norm, file = "tables/matriz_conteos_normalizados_DESeq2.csv")
 
 
-write.csv(txi_deseq2$abundance, file = "tables/matriz_TPM_genes_obesos.csv"
+write.csv(txi_deseq2$abundance, file = "tables/matriz_TPM_genes_obesos.csv")
 
 res_deseq2 <- results(object = obj_deseq2,
     contrast = c("Condition", "Sobrepeso/Obeso2", "Sobrepeso/Obeso1"),
@@ -225,3 +225,8 @@ print(resumen_metodos)
 write.csv(resumen_metodos,
           file = "tables/resumen_DESeq2_edgeR.csv",
           row.names = FALSE)    # Guarda resumen para póster
+saveRDS(object = obj_deseq2,
+        file = "objects/obj_deseq2.rds")    # Guarda objeto DESeq2 principal para parte 6
+
+saveRDS(object = obj_deseq2_edad,
+        file = "objects/obj_deseq2_edad.rds")    # Guarda modelo DESeq2 ajustado por edad
